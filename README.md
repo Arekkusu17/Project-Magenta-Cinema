@@ -15,6 +15,8 @@ Este sistema permite gestionar la información de películas en cartelera, enfoc
 - ✅ **Validaciones en Tiempo Real**: Feedback inmediato al usuario
 - ✅ **Interfaz Intuitiva**: Diseño moderno con Java Swing
 - ✅ **Base de Datos Robusta**: MySQL con charset UTF-8 completo
+- ✅ **CRUD Completo**: Agregar, modificar y eliminar películas desde la interfaz
+- ✅ **Pruebas Automatizadas**: Cobertura de validaciones y operaciones CRUD
 - ✅ **Manejo de Errores**: Sistema comprensivo de manejo de excepciones
 
 ## 🛠️ Tecnologías Utilizadas
@@ -31,23 +33,30 @@ Este sistema permite gestionar la información de películas en cartelera, enfoc
 ProjectMagenta/
 ├── src/
 │   └── projectmagenta/
-│       ├── ProjectMagenta.java          # Clase principal
+│       ├── app/
+│       │   └── Main.java                    # Clase principal
 │       ├── controller/
-│       │   └── MovieController.java     # Controlador MVC
+│       │   └── MovieController.java         # Controlador MVC
 │       ├── dao/
-│       │   ├── DBConnection.java        # Conexión a BD
-│       │   └── MovieDao.java           # Acceso a datos
-│       ├── gui/
-│       │   ├── MainFrame.java          # Ventana principal
-│       │   └── AddMovieForm.java       # Formulario agregar
-│       └── model/
-│           └── Movie.java              # Modelo de datos
+│       │   ├── DBConnection.java            # Conexión a BD
+│       │   └── MovieDAO.java                # Acceso a datos
+│       ├── model/
+│       │   └── Movie.java                   # Modelo de datos
+│       └── view/
+│           ├── icons/                       # Iconos para botones del programa
+│           ├── MainFrame.java               # Ventana principal
+│           ├── AddMovieForm.java            # Formulario agregar
+│           ├── EditMovieForm.java           # Formulario modificar (NUEVO)
+│           └── DeleteMovieForm.java         # Formulario eliminar (NUEVO)
 ├── database/
-│   ├── create_database.sql             # Script creación BD
-│   └── README.md                       # Documentación BD
-├── build/                              # Archivos compilados
-├── nbproject/                          # Configuración NetBeans
-└── README.md                           # Este archivo
+│   ├── create_database.sql                  # Script creación BD
+│   └── README.md                            # Documentación BD
+├── build/                                   # Archivos compilados
+├── nbproject/                               # Configuración NetBeans
+├── test/
+│   ├── projectmagenta/dao/MovieDaoTest.java # Pruebas automáticas CRUD y validación
+│   └── README.md                            # Documentación de pruebas
+└── README.md                                # Este archivo
 ```
 
 ## ⚙️ Configuración e Instalación
@@ -93,7 +102,8 @@ java -cp "build/classes:lib/*" projectmagenta.ProjectMagenta
 - 📋 Menú de navegación simplificado
 - 🔄 Validación automática de conexión a BD
 
-### Agregar Películas (AddMovieForm)
+### Gestión de Películas (CRUD)
+- ✔️ Agregar, modificar y eliminar películas desde la interfaz
 - ✔️ Restricciones de entrada personalizadas
 - 💾 Integración completa con base de datos
 
@@ -132,6 +142,8 @@ CREATE TABLE Cartelera (
 ### View (Vista)
 - `MainFrame.java`: Ventana principal del sistema
 - `AddMovieForm.java`: Formulario para agregar películas
+- `DeleteMovieForm.java`: Formulario para eliminar películas
+- `EditMovieForm.java`: Formulario para modificar películas
 
 ### Controller (Controlador)
 - `MovieController.java`: Lógica de control y validaciones
@@ -150,11 +162,23 @@ CREATE TABLE Cartelera (
    - Sistema valida datos y guarda en BD
    - Confirma operación exitosa
 
+3. **Modificar Película Existente** (NUEVO)
+   - Usuario busca una película por título
+   - Modifica los campos permitidos
+   - Sistema valida y actualiza en BD
+   - Confirma operación exitosa
+
+4. **Eliminar Película Existente** (NUEVO)
+   - Usuario busca una película por título
+   - Confirma la eliminación
+   - Sistema elimina el registro en BD
+   - Confirma operación exitosa
+
 
 
 ## 🧪 Pruebas Automáticas y Validación
 
-La documentación completa de los casos de prueba automáticos y validación de base de datos se encuentra en [`test/README.md`](test/README.md).
+El proyecto incluye pruebas automáticas que validan todo el ciclo CRUD y las reglas de negocio del modelo `Movie`, incluyendo inserción, modificación, eliminación y validaciones de datos. Consulta la documentación completa de pruebas en [`test/README.md`](test/README.md).
 
 ## 🐛 Manejo de Errores
 
@@ -165,8 +189,7 @@ La documentación completa de los casos de prueba automáticos y validación de 
 
 ## 🏗️ Próximos Desarrollos
 
-- Incluir funcionalidades de búsqueda
-- Permitir editar/eliminar películas existentes
+- Incluir funcionalidades de búsqueda avanzada
 - Implementar reportes o estadísticas
 
 ## 👤 Información del Desarrollador

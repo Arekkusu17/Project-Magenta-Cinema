@@ -87,19 +87,63 @@ public class MainFrame extends JFrame {
         toolBar.setFloatable(false);
 
         // Add Movie button (large, clear)
-        JButton addButton = new JButton("Agregar Película");
-        addButton.setIcon(createIcon("➕"));
-        addButton.setToolTipText("Agregar nueva película (Ctrl+N)");
-        addButton.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        addButton.setFocusable(false);
-        addButton.setPreferredSize(new Dimension(200, 40));
-        addButton.addActionListener(e -> openAddMovieForm());
+
+    JButton addButton = new JButton("Agregar Película");
+    addButton.setIcon(createImageIcon("/projectmagenta/view/icons/add_movie.png"));
+    addButton.setToolTipText("Agregar nueva película (Ctrl+N)");
+    addButton.setFont(new Font("Segoe UI", Font.BOLD, 20));
+    addButton.setFocusable(false);
+    addButton.setPreferredSize(new Dimension(240, 56));
+    addButton.setIconTextGap(16);
+    addButton.addActionListener(e -> openAddMovieForm());
+
+    // Edit Movie button
+    JButton editButton = new JButton("Modificar Película");
+    editButton.setIcon(createImageIcon("/projectmagenta/view/icons/edit_movie.png"));
+    editButton.setToolTipText("Modificar una película existente");
+    editButton.setFont(new Font("Segoe UI", Font.BOLD, 20));
+    editButton.setFocusable(false);
+    editButton.setPreferredSize(new Dimension(260, 56));
+    editButton.setIconTextGap(16);
+    editButton.addActionListener(e -> openEditMovieForm());
+
+    // Delete Movie button
+    JButton deleteButton = new JButton("Eliminar Película");
+    deleteButton.setIcon(createImageIcon("/projectmagenta/view/icons/delete_movie.png"));
+    deleteButton.setToolTipText("Eliminar una película existente");
+    deleteButton.setFont(new Font("Segoe UI", Font.BOLD, 20));
+    deleteButton.setFocusable(false);
+    deleteButton.setPreferredSize(new Dimension(260, 56));
+    deleteButton.setIconTextGap(16);
+    deleteButton.addActionListener(e -> openDeleteMovieForm());
 
         toolBar.add(Box.createHorizontalStrut(10)); // Padding
         toolBar.add(addButton);
+        toolBar.add(Box.createHorizontalStrut(10));
+        toolBar.add(editButton);
+        toolBar.add(Box.createHorizontalStrut(10));
+        toolBar.add(deleteButton);
         toolBar.add(Box.createHorizontalGlue());
 
         add(toolBar, BorderLayout.NORTH);
+    }
+
+    /**
+     * Abre el formulario para modificar películas existentes.
+     */
+    private void openEditMovieForm() {
+        EditMovieForm editForm = new EditMovieForm();
+        addInternalFrame(editForm, "Modificar Película");
+        updateStatus("Formulario de modificar película abierto");
+    }
+    
+    /**
+     * Abre el formulario para eliminar películas existentes.
+     */
+    private void openDeleteMovieForm() {
+        DeleteMovieForm deleteForm = new DeleteMovieForm();
+        addInternalFrame(deleteForm, "Eliminar Película");
+        updateStatus("Formulario de eliminar película abierto");
     }
     
     /**
@@ -125,27 +169,19 @@ public class MainFrame extends JFrame {
     }
     
     /**
-     * Creates a simple emoji icon for toolbar buttons.
-     * Beginners: Replace with ImageIcon for custom images if desired.
+     * Crea un ImageIcon escalado para los botones de la barra de herramientas.
+     * @param path Ruta del recurso (por ejemplo, "/projectmagenta/view/icons/add.png")
+     * @return ImageIcon escalado o null si no se encuentra
      */
-    private Icon createIcon(String emoji) {
-        return new Icon() {
-            @Override
-            public void paintIcon(Component c, Graphics g, int x, int y) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-                g2.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 20));
-                g2.drawString(emoji, x, y + 18);
-                g2.dispose();
-            }
-
-            @Override
-            public int getIconWidth() { return 28; }
-
-            @Override
-            public int getIconHeight() { return 28; }
-        };
+    private ImageIcon createImageIcon(String path) {
+        java.net.URL imgURL = getClass().getResource(path);
+        if (imgURL != null) {
+            Image img = new ImageIcon(imgURL).getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+            return new ImageIcon(img);
+        } else {
+            System.err.println("No se pudo encontrar el icono: " + path);
+            return null;
+        }
     }
     
     /**

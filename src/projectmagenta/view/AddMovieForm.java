@@ -143,18 +143,39 @@ public class AddMovieForm extends JInternalFrame {
     private JPanel createButtonPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         
+        // Guardar
         saveButton = new JButton("Guardar");
-        saveButton.setIcon(createStandardIcon("save"));
+        ImageIcon saveIcon = null;
+        java.net.URL saveURL = getClass().getResource("/projectmagenta/view/icons/save.png");
+        if (saveURL != null) {
+            Image img = new ImageIcon(saveURL).getImage().getScaledInstance(18, 18, Image.SCALE_SMOOTH);
+            saveIcon = new ImageIcon(img);
+        }
+        saveButton.setIcon(saveIcon);
         saveButton.setToolTipText("Guardar la película");
         saveButton.setPreferredSize(new Dimension(120, 35));
         
+        // Limpiar
         cleanButton = new JButton("Limpiar");
-        cleanButton.setIcon(createStandardIcon("clean"));
+        ImageIcon cleanIcon = null;
+        java.net.URL cleanURL = getClass().getResource("/projectmagenta/view/icons/clean.png");
+        if (cleanURL != null) {
+            Image img = new ImageIcon(cleanURL).getImage().getScaledInstance(18, 18, Image.SCALE_SMOOTH);
+            cleanIcon = new ImageIcon(img);
+        }
+        cleanButton.setIcon(cleanIcon);
         cleanButton.setToolTipText("Limpiar todos los campos");
         cleanButton.setPreferredSize(new Dimension(120, 35));
         
+        // Cancelar
         cancelButton = new JButton("Cancelar");
-        cancelButton.setIcon(createStandardIcon("cancel"));
+        ImageIcon cancelIcon = null;
+        java.net.URL cancelURL = getClass().getResource("/projectmagenta/view/icons/cancel.png");
+        if (cancelURL != null) {
+            Image img = new ImageIcon(cancelURL).getImage().getScaledInstance(18, 18, Image.SCALE_SMOOTH);
+            cancelIcon = new ImageIcon(img);
+        }
+        cancelButton.setIcon(cancelIcon);
         cancelButton.setToolTipText("Cancelar y cerrar");
         cancelButton.setPreferredSize(new Dimension(120, 35));
         
@@ -163,24 +184,6 @@ public class AddMovieForm extends JInternalFrame {
         panel.add(cancelButton);
         
         return panel;
-    }
-    
-    /**
-     * Crea un icono estándar de Java para los botones.
-     * @param type Tipo de icono: "save", "clean", "cancel"
-     * @return Icono estándar
-     */
-    private Icon createStandardIcon(String type) {
-        switch (type) {
-            case "save":
-                return UIManager.getIcon("FileView.floppyDriveIcon");
-            case "clean":
-                return UIManager.getIcon("OptionPane.informationIcon"); // No hay icono de limpiar estándar
-            case "cancel":
-                return UIManager.getIcon("OptionPane.errorIcon");
-            default:
-                return null;
-        }
     }
     
     /**
