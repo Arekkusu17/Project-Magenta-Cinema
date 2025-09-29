@@ -6,10 +6,8 @@ package projectmagenta.dao;
 
 /**
  * Clase utilitaria para gestionar la conexión a la base de datos MySQL Cine_DB.
- * <p>
  * Proporciona métodos estáticos para obtener, cerrar y probar la conexión.
- * </p>
- * @author arekk
+ * @author Alex Fernandez
  */
 import java.sql.Connection;
 import java.sql.DriverManager;

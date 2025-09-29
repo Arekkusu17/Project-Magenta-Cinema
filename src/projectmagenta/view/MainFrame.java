@@ -7,7 +7,7 @@ import java.awt.*;
  * Ventana principal del sistema de cines Magenta
  * Contiene la barra de herramientas y menús para acceder a las diferentes funcionalidades
  * 
- * @author arekk
+ * @author Alex Fernandez
  */
 public class MainFrame extends JFrame {
 

@@ -10,7 +10,7 @@ import javax.swing.UIManager;
  * Clase principal que inicia la aplicación, configura el Look and Feel,
  * y verifica la conexión a la base de datos antes de mostrar la interfaz gráfica principal. 
  *
- * @author arekk
+ * @author Alex Fernandez
  */
 public class Main {
 

@@ -5,10 +5,8 @@ import java.sql.*;
 
 /**
  * Data Access Object (DAO) para operaciones con películas en la base de datos.
- * <p>
  * Permite agregar nuevas películas y eliminar por título (usado en tests).
- * </p>
- * @author arekk
+ * @author Alex Fernandez
  */
 public class MovieDAO {
     /**

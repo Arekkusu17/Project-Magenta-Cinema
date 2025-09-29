@@ -3,7 +3,7 @@ package projectmagenta.model;
 /**
  * Modelo de datos que representa una película en el sistema de cines Magenta.
  * Incluye atributos básicos, constructores, validación y utilidades para mostrar información.
- * @author arekk
+ * @author Alex Fernandez
  */
 public class Movie {
     private int id;

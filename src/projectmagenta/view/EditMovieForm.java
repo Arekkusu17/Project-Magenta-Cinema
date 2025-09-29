@@ -13,7 +13,10 @@ import java.util.Calendar;
  * Permite buscar, mostrar, editar y guardar cambios de una película.
  * Incluye validaciones y botón para limpiar campos.
  * Muestra mensajes de error amigables si los datos son inválidos.
+ * 
+ * @author Alex Fernández
  */
+
 public class EditMovieForm extends JInternalFrame {
     private JTextField txtTitulo;
     private JTextField txtDirector;
@@ -28,12 +31,18 @@ public class EditMovieForm extends JInternalFrame {
     private MovieController movieController;
     private Movie currentMovie;
 
+    /**
+     * Constructor. Inicializa el formulario y los listeners.
+     */
     public EditMovieForm() {
         movieController = new MovieController();
         initComponents();
         setupEventListeners();
     }
 
+    /**
+     * Inicializa los componentes gráficos y el layout del formulario.
+     */
     private void initComponents() {
         setTitle("Modificar Película");
         setSize(500, 480);
@@ -54,6 +63,10 @@ public class EditMovieForm extends JInternalFrame {
         add(mainPanel);
     }
 
+    /**
+     * Crea el panel de búsqueda y edición de datos de la película.
+     * @return JPanel con los campos de la película
+     */
     private JPanel createFormPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createTitledBorder("Buscar y Modificar Película"));
@@ -119,6 +132,10 @@ public class EditMovieForm extends JInternalFrame {
         return panel;
     }
 
+    /**
+     * Crea el panel de botones de acción (Guardar, Limpiar, Cancelar).
+     * @return JPanel con los botones principales
+     */
     private JPanel createButtonPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         // Guardar Cambios
@@ -163,6 +180,9 @@ public class EditMovieForm extends JInternalFrame {
         return panel;
     }
 
+    /**
+     * Configura los listeners de los botones y acciones del formulario.
+     */
     private void setupEventListeners() {
         // Buscar película
         searchButton.addActionListener(new ActionListener() {
@@ -194,6 +214,10 @@ public class EditMovieForm extends JInternalFrame {
         });
     }
 
+    /**
+     * Busca una película por título usando el controlador y muestra sus datos si existe.
+     * Muestra mensajes de error si no se encuentra o si el campo está vacío.
+     */
     private void buscarPelicula() {
         String titulo = txtTitulo.getText().trim();
         if (titulo.isEmpty()) {
@@ -217,6 +241,10 @@ public class EditMovieForm extends JInternalFrame {
         JOptionPane.showMessageDialog(this, "Película encontrada. Puede modificar los datos y guardar los cambios.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Valida y guarda los cambios realizados en la película actual.
+     * Muestra mensajes de éxito o error según el resultado.
+     */
     private void guardarCambios() {
         // Validar que todos los campos estén llenos
         if (txtTitulo.getText().trim().isEmpty() || txtDirector.getText().trim().isEmpty()) {
@@ -247,6 +275,9 @@ public class EditMovieForm extends JInternalFrame {
         }
     }
 
+    /**
+     * Limpia todos los campos del formulario y restablece los valores por defecto.
+     */
     private void limpiarCampos() {
         txtTitulo.setText("");
         txtDirector.setText("");

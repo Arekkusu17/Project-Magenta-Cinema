@@ -26,12 +26,18 @@ public class DeleteMovieForm extends JInternalFrame {
     private MovieController movieController;
     private Movie currentMovie;
 
+    /**
+     * Constructor. Inicializa el formulario y los listeners.
+     */
     public DeleteMovieForm() {
         movieController = new MovieController();
         initComponents();
         setupEventListeners();
     }
 
+    /**
+     * Inicializa los componentes gráficos y el layout del formulario.
+     */
     private void initComponents() {
         setTitle("Eliminar Película");
         setSize(500, 480);
@@ -52,6 +58,10 @@ public class DeleteMovieForm extends JInternalFrame {
         add(mainPanel);
     }
 
+    /**
+     * Crea el panel de búsqueda y visualización de datos de la película.
+     * @return JPanel con los campos de la película (solo lectura, excepto búsqueda)
+     */
     private JPanel createFormPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createTitledBorder("Buscar y Eliminar Película"));
@@ -117,6 +127,10 @@ public class DeleteMovieForm extends JInternalFrame {
         return panel;
     }
 
+    /**
+     * Crea el panel de botones de acción (Eliminar, Limpiar, Cancelar).
+     * @return JPanel con los botones principales
+     */
     private JPanel createButtonPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         // Eliminar
@@ -161,6 +175,9 @@ public class DeleteMovieForm extends JInternalFrame {
         return panel;
     }
 
+    /**
+     * Configura los listeners de los botones y acciones del formulario.
+     */
     private void setupEventListeners() {
         // Buscar película
         searchButton.addActionListener(new ActionListener() {
@@ -192,6 +209,10 @@ public class DeleteMovieForm extends JInternalFrame {
         });
     }
 
+    /**
+     * Busca una película por título usando el controlador y muestra sus datos si existe.
+     * Muestra mensajes de error si no se encuentra o si el campo está vacío.
+     */
     private void buscarPelicula() {
         String titulo = txtTitulo.getText().trim();
         if (titulo.isEmpty()) {
@@ -214,6 +235,10 @@ public class DeleteMovieForm extends JInternalFrame {
         JOptionPane.showMessageDialog(this, "Película encontrada. Puede proceder a eliminarla si lo desea.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Elimina la película actualmente cargada tras confirmación del usuario.
+     * Muestra mensajes de éxito o error según el resultado.
+     */
     private void eliminarPelicula() {
         if (currentMovie == null) {
             JOptionPane.showMessageDialog(this, "Debe buscar y seleccionar una película antes de eliminar.", "Error", JOptionPane.WARNING_MESSAGE);
@@ -232,6 +257,9 @@ public class DeleteMovieForm extends JInternalFrame {
         }
     }
 
+    /**
+     * Limpia todos los campos del formulario y restablece los valores por defecto.
+     */
     private void limpiarCampos() {
         txtTitulo.setText("");
         txtDirector.setText("");

@@ -13,7 +13,7 @@ import java.util.Calendar;
  * Incluye validaciones y botón para limpiar campos.
  * Muestra mensajes de error amigables si los datos son inválidos.
  *
- * @author arekk
+ * @author Alex Fernandez
  */
 public class AddMovieForm extends JInternalFrame {
     

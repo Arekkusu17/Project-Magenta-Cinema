@@ -7,42 +7,11 @@ import projectmagenta.model.Movie;
  * Controlador para la gestión de películas.
  * Implementa la lógica de negocio para agregar películas, validando los datos
  * antes de delegar la inserción al DAO. Forma parte del patrón MVC.
- * @author arekk
+ * @author Alex Fernandez
  */
 public class MovieController {
 
-    /**
-     * Busca una película por su título exacto.
-     * @param title Título de la película a buscar
-     * @return Movie si se encuentra, null si no existe
-     */
-    public Movie findMovieByTitle(String title) {
-        if (title == null || title.trim().isEmpty()) return null;
-        return movieDao.findMovieByTitle(title.trim());
-    }
 
-    /**
-     * Actualiza los datos de una película existente.
-     * @param movie Objeto Movie con los datos actualizados
-     * @return MovieResult con el resultado de la operación
-     */
-    public MovieResult updateMovie(Movie movie) {
-        try {
-            if (movie == null || movie.getId() <= 0) {
-                return new MovieResult(false, "Se requiere una película válida para actualizar.");
-            }
-            boolean success = movieDao.updateMovie(movie);
-            if (success) {
-                return new MovieResult(true, "Película actualizada exitosamente.");
-            } else {
-                return new MovieResult(false, "No se pudo actualizar la película en la base de datos.");
-            }
-        } catch (IllegalArgumentException ex) {
-            return new MovieResult(false, "Error de validación: " + ex.getMessage());
-        } catch (Exception e) {
-            return new MovieResult(false, "Error inesperado: " + e.getMessage());
-        }
-    }
     
     private MovieDAO movieDao;
     
@@ -97,7 +66,38 @@ public class MovieController {
             return new MovieResult(false, "No se pudo eliminar la película en la base de datos.");
         }
     }
-    
+        /**
+     * Busca una película por su título exacto.
+     * @param title Título de la película a buscar
+     * @return Movie si se encuentra, null si no existe
+     */
+    public Movie findMovieByTitle(String title) {
+        if (title == null || title.trim().isEmpty()) return null;
+        return movieDao.findMovieByTitle(title.trim());
+    }
+
+    /**
+     * Actualiza los datos de una película existente.
+     * @param movie Objeto Movie con los datos actualizados
+     * @return MovieResult con el resultado de la operación
+     */
+    public MovieResult updateMovie(Movie movie) {
+        try {
+            if (movie == null || movie.getId() <= 0) {
+                return new MovieResult(false, "Se requiere una película válida para actualizar.");
+            }
+            boolean success = movieDao.updateMovie(movie);
+            if (success) {
+                return new MovieResult(true, "Película actualizada exitosamente.");
+            } else {
+                return new MovieResult(false, "No se pudo actualizar la película en la base de datos.");
+            }
+        } catch (IllegalArgumentException ex) {
+            return new MovieResult(false, "Error de validación: " + ex.getMessage());
+        } catch (Exception e) {
+            return new MovieResult(false, "Error inesperado: " + e.getMessage());
+        }
+    }
     /**
      * Clase interna para representar el resultado de operaciones con películas.
      * Incluye si fue exitoso y un mensaje asociado.
