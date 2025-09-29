@@ -15,6 +15,34 @@ public class MovieDAO {
      * @return true si la eliminación fue exitosa, false si hubo error
      */
     public boolean deleteMovieById(int id) {
+        // Buscar el registro original antes de eliminar
+        Movie originalMovie = null;
+        String sqlSelect = "SELECT id, title, director, year, duration, genre FROM Cartelera WHERE id = ?";
+        try (Connection connSel = DBConnection.getConnection();
+             PreparedStatement pstmtSel = connSel != null ? connSel.prepareStatement(sqlSelect) : null) {
+            if (connSel != null && pstmtSel != null) {
+                pstmtSel.setInt(1, id);
+                try (ResultSet rs = pstmtSel.executeQuery()) {
+                    if (rs.next()) {
+                        originalMovie = new Movie();
+                        originalMovie.setId(rs.getInt("id"));
+                        originalMovie.setTitle(rs.getString("title"));
+                        originalMovie.setDirector(rs.getString("director"));
+                        originalMovie.setYear(rs.getInt("year"));
+                        originalMovie.setDuration(rs.getInt("duration"));
+                        originalMovie.setGenre(rs.getString("genre"));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            // No imprimir error aquí para no saturar la consola
+        }
+        if (originalMovie != null) {
+            System.out.println("[INFO] Registro original: " + originalMovie.toString());
+        } else {
+            System.out.println("[INFO] No se encontró registro original para id=" + id);
+        }
+        System.out.println("[INFO] Intentando eliminar la película con id: " + id + "...");
         String sql = "DELETE FROM Cartelera WHERE id = ?";
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -24,7 +52,13 @@ public class MovieDAO {
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, id);
             int rows = pstmt.executeUpdate();
-            return rows > 0;
+            if (rows > 0) {
+                System.out.println("[SUCCESS] Registro eliminado. ");
+                return true;
+            } else {
+                System.out.println("[ERROR] No se encontró ninguna película con id=" + id + " para eliminar.");
+                return false;
+            }
         } catch (SQLException e) {
             System.out.println("[ERROR] No se pudo eliminar la película.\nDetalles técnicos: " + e.getMessage());
             return false;
@@ -76,6 +110,34 @@ public class MovieDAO {
             System.out.println("[ERROR] Se requiere un objeto película válido con id para actualizar.");
             return false;
         }
+        // Buscar el registro original antes de actualizar
+        Movie originalMovie = null;
+        String sqlSelect = "SELECT id, title, director, year, duration, genre FROM Cartelera WHERE id = ?";
+        try (Connection connSel = DBConnection.getConnection();
+             PreparedStatement pstmtSel = connSel != null ? connSel.prepareStatement(sqlSelect) : null) {
+            if (connSel != null && pstmtSel != null) {
+                pstmtSel.setInt(1, movie.getId());
+                try (ResultSet rs = pstmtSel.executeQuery()) {
+                    if (rs.next()) {
+                        originalMovie = new Movie();
+                        originalMovie.setId(rs.getInt("id"));
+                        originalMovie.setTitle(rs.getString("title"));
+                        originalMovie.setDirector(rs.getString("director"));
+                        originalMovie.setYear(rs.getInt("year"));
+                        originalMovie.setDuration(rs.getInt("duration"));
+                        originalMovie.setGenre(rs.getString("genre"));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            // No imprimir error aquí para no saturar la consola
+        }
+        if (originalMovie != null) {
+            System.out.println("[INFO] Registro original: " + originalMovie.toString());
+        } else {
+            System.out.println("[INFO] No se encontró registro original para id=" + movie.getId());
+        }
+        System.out.println("[INFO] Intentando modificar la película con id: " + movie.getId() + "...");
         String sql = "UPDATE Cartelera SET title = ?, director = ?, year = ?, duration = ?, genre = ? WHERE id = ?";
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -90,7 +152,13 @@ public class MovieDAO {
             pstmt.setString(5, movie.getGenre());
             pstmt.setInt(6, movie.getId());
             int rows = pstmt.executeUpdate();
-            return rows > 0;
+            if (rows > 0) {
+                System.out.println("[SUCCESS] Registro actualizado: " + movie.toString());
+                return true;
+            } else {
+                System.out.println("[ERROR] No se encontró ninguna película con id=" + movie.getId() + " para modificar.");
+                return false;
+            }
         } catch (SQLException e) {
             System.out.println("[ERROR] No se pudo actualizar la película.\nDetalles técnicos: " + e.getMessage());
             return false;
