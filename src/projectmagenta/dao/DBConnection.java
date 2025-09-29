@@ -33,10 +33,10 @@ public class DBConnection {
             System.out.println("Conexión exitosa a la base de datos Cine_DB");
             return conn;
         } catch (SQLException e) {
-            System.out.println("Error de SQL al conectar: " + e.getMessage());
+            System.out.println("[ERROR] No se pudo conectar a la base de datos. Por favor, verifica que el servidor esté activo y que los datos de acceso sean correctos.\nDetalles técnicos: " + e.getMessage());
             return null;
         } catch (ClassNotFoundException e) {
-            System.out.println("Driver MySQL no encontrado: " + e.getMessage());
+            System.out.println("[ERROR] No se encontró el controlador de MySQL. Por favor, asegúrate de que el conector JDBC esté instalado.\nDetalles técnicos: " + e.getMessage());
             return null;
         }
     }
@@ -51,7 +51,7 @@ public class DBConnection {
                 conn.close();
                 System.out.println("Conexión cerrada exitosamente");
             } catch (SQLException e) {
-                System.out.println("Error al cerrar la conexión: " + e.getMessage());
+                System.out.println("[ADVERTENCIA] Ocurrió un problema al cerrar la conexión con la base de datos.\nDetalles técnicos: " + e.getMessage());
             }
         }
     }

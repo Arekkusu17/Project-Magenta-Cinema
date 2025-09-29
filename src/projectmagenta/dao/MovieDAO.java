@@ -55,7 +55,7 @@ public class MovieDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("[ERROR] Error SQL al agregar película: " + e.getMessage());
+            System.out.println("[ERROR] No se pudo agregar la película. Por favor, verifica que los datos sean correctos y que la conexión a la base de datos esté disponible.\nDetalles técnicos: " + e.getMessage());
             return false;
         } finally {
             closeResources(conn, pstmt, null);
@@ -79,7 +79,7 @@ public class MovieDAO {
             int rows = pstmt.executeUpdate();
             return rows;
         } catch (SQLException e) {
-            System.out.println("Error al eliminar películas de test: " + e.getMessage());
+            System.out.println("[ERROR] No se pudo eliminar la(s) película(s) con el título indicado. Por favor, verifica la conexión a la base de datos.\nDetalles técnicos: " + e.getMessage());
             return 0;
         } finally {
             closeResources(conn, pstmt, null);
@@ -98,7 +98,7 @@ public class MovieDAO {
             if (stmt != null) stmt.close();
             if (conn != null) conn.close();
         } catch (SQLException e) {
-            System.out.println("Error al cerrar recursos: " + e.getMessage());
+            System.out.println("[ADVERTENCIA] Ocurrió un problema al cerrar la conexión con la base de datos.\nDetalles técnicos: " + e.getMessage());
         }
     }
 }

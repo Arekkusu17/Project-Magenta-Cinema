@@ -27,21 +27,26 @@ public class Main {
         // Configurar el Look and Feel antes de crear la interfaz
         configureLookAndFeel();
         
-        // Verificar conexión a la base de datos
-        if (testDatabaseConnection()) {
-            // Iniciar la interfaz gráfica en el EDT (Event Dispatch Thread)
-            SwingUtilities.invokeLater(() -> {
-                try {
-                    MainFrame mainFrame = new MainFrame();
-                    mainFrame.setVisible(true);
-                } catch (Exception e) {
-                    System.err.println("Error al inicializar la interfaz: " + e.getMessage());
-                    e.printStackTrace();
-                }
-            });
-        } else {
-            System.err.println("No se pudo iniciar la aplicación debido a problemas de conexión a la base de datos.");
-            System.exit(1);
+        // Verificar conexión a la base de datos con manejo de excepciones
+        try {
+            if (testDatabaseConnection()) {
+                // Iniciar la interfaz gráfica en el EDT (Event Dispatch Thread)
+                SwingUtilities.invokeLater(() -> {
+                    try {
+                        MainFrame mainFrame = new MainFrame();
+                        mainFrame.setVisible(true);
+                    } catch (Exception e) {
+                        System.err.println("Error al inicializar la interfaz: " + e.getMessage());
+                        e.printStackTrace();
+                    }
+                });
+            } else {
+                System.err.println("No se pudo iniciar la aplicación debido a problemas de conexión a la base de datos.");
+                System.exit(1);
+            }
+        } catch (Exception ex) {
+            System.err.println("Ocurrió un error inesperado al verificar la conexión a la base de datos.\nDetalles técnicos: " + ex.getMessage());
+            System.exit(2);
         }
     }
     
