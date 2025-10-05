@@ -1,7 +1,10 @@
 package projectmagenta.view;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Ventana principal del sistema de cines Magenta
@@ -15,11 +18,22 @@ public class MainFrame extends JFrame {
     private JDesktopPane desktopPane;
     // Status bar label
     private JLabel statusLabel;
+    // Desktop cartelera table model for live updates
+    private DefaultTableModel desktopTableModel;
+    // List of observers for movie changes
+    private List<MovieChangeListener> movieChangeListeners;
+    
+    // Interface for observing movie changes
+    public interface MovieChangeListener {
+        void onMovieChanged();
+    }
 
     /**
      * Constructor: sets up the main window and its components.
      */
     public MainFrame() {
+        // Initialize observers list
+        movieChangeListeners = new ArrayList<>();
         // Initialize all GUI components
         initComponents();
         // Set up window event listeners
@@ -117,12 +131,30 @@ public class MainFrame extends JFrame {
     deleteButton.setIconTextGap(16);
     deleteButton.addActionListener(e -> openDeleteMovieForm());
 
+    // View All Movies button
+    JButton viewAllButton = new JButton("Ver Cartelera");
+    // Try to use an existing icon, fallback to no icon if not found
+    ImageIcon viewIcon = createImageIcon("/projectmagenta/view/icons/view_movies.png");
+    if (viewIcon == null) {
+        // Create a simple list-like icon if the image doesn't exist
+        viewIcon = createListIcon();
+    }
+    viewAllButton.setIcon(viewIcon);
+    viewAllButton.setToolTipText("Ver todas las películas en cartelera");
+    viewAllButton.setFont(new Font("Segoe UI", Font.BOLD, 20));
+    viewAllButton.setFocusable(false);
+    viewAllButton.setPreferredSize(new Dimension(220, 56));
+    viewAllButton.setIconTextGap(16);
+    viewAllButton.addActionListener(e -> openViewAllMoviesForm());
+
         toolBar.add(Box.createHorizontalStrut(10)); // Padding
         toolBar.add(addButton);
         toolBar.add(Box.createHorizontalStrut(10));
         toolBar.add(editButton);
         toolBar.add(Box.createHorizontalStrut(10));
         toolBar.add(deleteButton);
+        toolBar.add(Box.createHorizontalStrut(10));
+        toolBar.add(viewAllButton);
         toolBar.add(Box.createHorizontalGlue());
 
         add(toolBar, BorderLayout.NORTH);
@@ -133,6 +165,8 @@ public class MainFrame extends JFrame {
      */
     private void openEditMovieForm() {
         EditMovieForm editForm = new EditMovieForm();
+        // Set up observer for live updates
+        editForm.setMainFrame(this);
         addInternalFrame(editForm, "Modificar Película");
         updateStatus("Formulario de modificar película abierto");
     }
@@ -142,8 +176,19 @@ public class MainFrame extends JFrame {
      */
     private void openDeleteMovieForm() {
         DeleteMovieForm deleteForm = new DeleteMovieForm();
+        // Set up observer for live updates
+        deleteForm.setMainFrame(this);
         addInternalFrame(deleteForm, "Eliminar Película");
         updateStatus("Formulario de eliminar película abierto");
+    }
+    
+    /**
+     * Abre el formulario para ver todas las películas en cartelera.
+     */
+    private void openViewAllMoviesForm() {
+        ViewAllMoviesForm viewAllForm = new ViewAllMoviesForm();
+        addInternalFrame(viewAllForm, "Cartelera Completa");
+        updateStatus("Vista de cartelera completa abierta");
     }
     
     /**
@@ -185,6 +230,37 @@ public class MainFrame extends JFrame {
     }
     
     /**
+     * Crea un icono simple de lista para el botón de ver cartelera.
+     * @return ImageIcon con un dibujo de lista
+     */
+    private ImageIcon createListIcon() {
+        int size = 40;
+        java.awt.image.BufferedImage img = new java.awt.image.BufferedImage(size, size, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = img.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setColor(new Color(70, 130, 180));
+        g2.setStroke(new BasicStroke(2.0f));
+        
+        // Dibujar líneas que representen una lista
+        int startX = 8;
+        int lineHeight = 6;
+        for (int i = 0; i < 5; i++) {
+            int y = 8 + (i * lineHeight);
+            g2.drawLine(startX, y, size - 8, y);
+        }
+        
+        // Dibujar puntos de viñeta
+        g2.fillOval(3, 6, 4, 4);
+        g2.fillOval(3, 12, 4, 4);
+        g2.fillOval(3, 18, 4, 4);
+        g2.fillOval(3, 24, 4, 4);
+        g2.fillOval(3, 30, 4, 4);
+        
+        g2.dispose();
+        return new ImageIcon(img);
+    }
+    
+    /**
      * Sets up window event listeners (e.g., confirm on close).
      * Beginners: Add more listeners for custom behavior.
      */
@@ -211,6 +287,8 @@ public class MainFrame extends JFrame {
      */
     private void openAddMovieForm() {
         AddMovieForm addForm = new AddMovieForm();
+        // Set up observer for live updates
+        addForm.setMainFrame(this);
         addInternalFrame(addForm, "Agregar Película");
         updateStatus("Formulario de agregar película abierto");
     }
@@ -225,6 +303,11 @@ public class MainFrame extends JFrame {
         frame.setClosable(true);
         frame.setMaximizable(true);
         frame.setIconifiable(true);
+
+        // Set a default size for the internal frame if not already set
+        if (frame.getWidth() == 0 || frame.getHeight() == 0) {
+            frame.setSize(600, 400); // Default size
+        }
 
         // Center the internal frame
         Dimension desktopSize = desktopPane.getSize();
@@ -246,58 +329,149 @@ public class MainFrame extends JFrame {
     }
 
     /**
-     * Shows a simple welcome panel for beginners.
-     * You can customize this message or add instructions.
+     * Shows a cartelera table panel on the main desktop.
+     * Displays an overview of all movies directly on the desktop.
      */
     private void showWelcomePanel() {
-        JPanel welcomePanel = new JPanel();
-        welcomePanel.setLayout(new BoxLayout(welcomePanel, BoxLayout.Y_AXIS));
-        welcomePanel.setBackground(new Color(255, 255, 255, 220));
-        welcomePanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180)),
-                BorderFactory.createEmptyBorder(40, 40, 40, 40)));
+        JPanel carteleraPanel = new JPanel(new BorderLayout(10, 10));
+        carteleraPanel.setBackground(new Color(255, 255, 255, 240));
+        carteleraPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(150, 150, 150)),
+                BorderFactory.createEmptyBorder(15, 15, 15, 15)));
 
-        Font defaultFont = new Font("Segoe UI", Font.PLAIN, 14);
-        welcomePanel.setFont(defaultFont);
+        Font defaultFont = new Font("Segoe UI", Font.PLAIN, 12);
+        carteleraPanel.setFont(defaultFont);
 
-        JLabel welcomeLabel = new JLabel("¡Bienvenido/a al Sistema de Gestión de Películas!");
-        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // Header with title
+        JLabel titleLabel = new JLabel("Cartelera de Cines Magenta", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        carteleraPanel.add(titleLabel, BorderLayout.NORTH);
 
-        JLabel tipLabel = new JLabel("Usa el menú o la barra de herramientas para comenzar.");
-        tipLabel.setFont(new Font("Segoe UI", Font.PLAIN, 18));
-        tipLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // Create table for movies
+        String[] columnNames = {"ID", "Título", "Director", "Año", "Duración", "Género"};
+        desktopTableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Read-only table
+            }
+        };
 
-        welcomePanel.add(welcomeLabel);
-        welcomePanel.add(Box.createVerticalStrut(20));
-        welcomePanel.add(tipLabel);
+        JTable moviesTable = new JTable(desktopTableModel);
+        moviesTable.setFont(defaultFont);
+        moviesTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 12));
+        moviesTable.setRowHeight(22);
+        moviesTable.setShowGrid(true);
+        moviesTable.setGridColor(Color.LIGHT_GRAY);
+        moviesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        // Center the welcome panel in the desktop pane
-        welcomePanel.setSize(600, 250);
-        int x = (desktopPane.getWidth() - welcomePanel.getWidth()) / 2;
-        int y = (desktopPane.getHeight() - welcomePanel.getHeight()) / 2;
-        welcomePanel.setLocation(Math.max(x, 0), Math.max(y, 0));
-        welcomePanel.setOpaque(true);
+        // Configure column widths
+        moviesTable.getColumnModel().getColumn(0).setPreferredWidth(40);  // ID
+        moviesTable.getColumnModel().getColumn(1).setPreferredWidth(200); // Título
+        moviesTable.getColumnModel().getColumn(2).setPreferredWidth(130); // Director
+        moviesTable.getColumnModel().getColumn(3).setPreferredWidth(50);  // Año
+        moviesTable.getColumnModel().getColumn(4).setPreferredWidth(80);  // Duración
+        moviesTable.getColumnModel().getColumn(5).setPreferredWidth(100); // Género
 
-        // Use a JInternalFrame for the welcome panel, but remove the title bar (no system menu button)
-        JInternalFrame welcomeFrame = new JInternalFrame("Bienvenida", false, false, false, false);
-        // Set a default font for the frame as well
-        welcomeFrame.setFont(defaultFont);
-        welcomeFrame.setContentPane(welcomePanel);
-        welcomeFrame.pack();
-        welcomeFrame.setSize(600, 250);
-        welcomeFrame.setLocation(Math.max(x, 50), Math.max(y, 50));
-        // Remove the title bar (north pane) to eliminate the system menu button
-        ((javax.swing.plaf.basic.BasicInternalFrameUI) welcomeFrame.getUI()).setNorthPane(null);
-        welcomeFrame.setVisible(true);
-        desktopPane.add(welcomeFrame);
-        // As a fallback, set a default font for popup menus 
-        UIManager.put("PopupMenu.font", defaultFont);
+        // Load movies data
+        loadMoviesData(desktopTableModel);
+
+        JScrollPane scrollPane = new JScrollPane(moviesTable);
+        scrollPane.setPreferredSize(new Dimension(650, 300));
+        carteleraPanel.add(scrollPane, BorderLayout.CENTER);
+
+        // Create internal frame
+        JInternalFrame carteleraFrame = new JInternalFrame("Cartelera Principal", false, false, false, false);
+        carteleraFrame.setFont(defaultFont);
+        carteleraFrame.setContentPane(carteleraPanel);
+        carteleraFrame.setSize(700, 400);
+        
+        // Center the frame
+        int x = Math.max((desktopPane.getWidth() - 700) / 2, 20);
+        int y = Math.max((desktopPane.getHeight() - 400) / 2, 20);
+        carteleraFrame.setLocation(x, y);
+        
+        // Remove title bar
+        ((javax.swing.plaf.basic.BasicInternalFrameUI) carteleraFrame.getUI()).setNorthPane(null);
+        carteleraFrame.setVisible(true);
+        desktopPane.add(carteleraFrame);
+        
         try {
-            welcomeFrame.setSelected(true);
+            carteleraFrame.setSelected(true);
         } catch (java.beans.PropertyVetoException e) {
             // Ignore
         }
+    }
+
+    /**
+     * Loads movies data into the table model.
+     */
+    private void loadMoviesData(DefaultTableModel tableModel) {
+        try {
+            projectmagenta.dao.MovieDAO movieDAO = new projectmagenta.dao.MovieDAO();
+            java.util.List<projectmagenta.model.Movie> movies = movieDAO.getAllMovies();
+            
+            for (projectmagenta.model.Movie movie : movies) {
+                Object[] row = {
+                    movie.getId(),
+                    movie.getTitle(),
+                    movie.getDirector(),
+                    movie.getYear(),
+                    movie.getDuracionFormateada(),
+                    movie.getGenre()
+                };
+                tableModel.addRow(row);
+            }
+        } catch (Exception e) {
+            // If there's an error loading movies, show a placeholder message
+            Object[] row = {"Error", "No se pudieron cargar las películas", "-", "-", "-", "-"};
+            tableModel.addRow(row);
+        }
+    }
+    
+    /**
+     * Refreshes the desktop cartelera table with current data.
+     */
+    public void refreshDesktopCartelera() {
+        if (desktopTableModel != null) {
+            SwingUtilities.invokeLater(() -> {
+                // Clear existing data
+                desktopTableModel.setRowCount(0);
+                // Reload data
+                loadMoviesData(desktopTableModel);
+                updateStatus("Cartelera actualizada");
+            });
+        }
+    }
+    
+    /**
+     * Adds a movie change listener.
+     */
+    public void addMovieChangeListener(MovieChangeListener listener) {
+        movieChangeListeners.add(listener);
+    }
+    
+    /**
+     * Notifies all listeners that movies have changed.
+     */
+    public void notifyMovieChanged() {
+        refreshDesktopCartelera();
+        for (MovieChangeListener listener : movieChangeListeners) {
+            listener.onMovieChanged();
+        }
+    }
+    
+    /**
+     * Gets the singleton instance of MainFrame (for accessing from other forms).
+     */
+    private static MainFrame instance;
+    
+    public static MainFrame getInstance() {
+        return instance;
+    }
+    
+    public static void setInstance(MainFrame mainFrame) {
+        instance = mainFrame;
     }
   
     /**
@@ -327,7 +501,9 @@ public class MainFrame extends JFrame {
             }
 
             // Start the main window
-            new MainFrame().setVisible(true);
+            MainFrame mainFrame = new MainFrame();
+            MainFrame.setInstance(mainFrame);
+            mainFrame.setVisible(true);
         });
     }
 }

@@ -3,9 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/arekk/OneDrive/Documentos/NetBeansProjects/ProjectMagenta/src/projectmagenta/app/Main.java</file>
-            <file>file:/C:/Users/arekk/OneDrive/Documentos/NetBeansProjects/ProjectMagenta/test/README.md</file>
-            <file>file:/C:/Users/arekk/OneDrive/Documentos/NetBeansProjects/ProjectMagenta/test/projectmagenta/dao/MovieDAOTest.java</file>
+            <file>file:/C:/Users/arekk/OneDrive/Documentos/NetBeansProjects/ProjectMagenta/src/projectmagenta/dao/DBConnection.java</file>
             <file>file:/C:/Users/arekk/OneDrive/Documentos/NetBeansProjects/ProjectMagenta/src/projectmagenta/model/Movie.java</file>
         </group>
     </open-files>

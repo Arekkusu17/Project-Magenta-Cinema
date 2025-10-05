@@ -27,6 +27,14 @@ public class AddMovieForm extends JInternalFrame {
     private JButton cancelButton;
     
     private MovieController movieController;
+    private MainFrame mainFrame;
+    
+    /**
+     * Sets the main frame reference for live updates.
+     */
+    public void setMainFrame(MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
+    }
     
     /**
      * Constructor. Inicializa el formulario y los listeners.
@@ -291,6 +299,10 @@ public class AddMovieForm extends JInternalFrame {
                                 JOptionPane.INFORMATION_MESSAGE
                             );
                             cleanFields();
+                            // Trigger live update
+                            if (mainFrame != null) {
+                                mainFrame.notifyMovieChanged();
+                            }
                         } else {
                             JOptionPane.showMessageDialog(
                                 AddMovieForm.this,

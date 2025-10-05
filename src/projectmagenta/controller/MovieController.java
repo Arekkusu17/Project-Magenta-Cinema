@@ -2,6 +2,7 @@ package projectmagenta.controller;
 
 import projectmagenta.dao.MovieDAO;
 import projectmagenta.model.Movie;
+import java.util.List;
 
 /**
  * Controlador para la gestión de películas.
@@ -66,7 +67,7 @@ public class MovieController {
             return new MovieResult(false, "No se pudo eliminar la película en la base de datos.");
         }
     }
-        /**
+    /**
      * Busca una película por su título exacto.
      * @param title Título de la película a buscar
      * @return Movie si se encuentra, null si no existe
@@ -74,6 +75,28 @@ public class MovieController {
     public Movie findMovieByTitle(String title) {
         if (title == null || title.trim().isEmpty()) return null;
         return movieDao.findMovieByTitle(title.trim());
+    }
+
+    /**
+     * Busca una película por su ID.
+     * @param id Identificador único de la película
+     * @return Movie si se encuentra, null si no existe
+     */
+    public Movie findMovieById(int id) {
+        if (id <= 0) return null;
+        return movieDao.findMovieById(id);
+    }
+
+    /**
+     * Busca películas cuyos títulos contengan una cadena específica.
+     * @param partialTitle Cadena parcial del título a buscar
+     * @return Lista de objetos Movie que coincidan con la búsqueda
+     */
+    public List<Movie> findMoviesByPartialTitle(String partialTitle) {
+        if (partialTitle == null || partialTitle.trim().isEmpty()) {
+            return new java.util.ArrayList<>();
+        }
+        return movieDao.findMoviesByPartialTitle(partialTitle.trim());
     }
 
     /**
