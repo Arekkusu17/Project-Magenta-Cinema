@@ -4,8 +4,6 @@ import projectmagenta.controller.MovieController;
 import projectmagenta.model.Movie;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 public class EditMovieForm extends JInternalFrame {

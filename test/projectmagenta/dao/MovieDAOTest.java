@@ -23,6 +23,11 @@ public class MovieDAOTest {
         
         MovieDAO dao = new MovieDAO();
         
+        // FASE 1: PRUEBAS DE VALIDACIÓN
+        System.out.println("==============================");
+        System.out.println("   FASE 1: PRUEBAS DE VALIDACIÓN   ");
+        System.out.println("==============================");
+        
         // Prueba 1: Película válida (debe insertarse en la base de datos)
         testCaseWithDB(dao, "Película válida", "Test Movie", "Juan Pérez", 2025, 120, "Drama", () -> {
             Movie m = new Movie();
@@ -201,6 +206,23 @@ public class MovieDAOTest {
             System.out.println("[ÉXITO] Se lanzó excepción para eliminación inválida: " + e.getMessage());
         }
         
+        // FASE 2: PRUEBAS DE FILTRADO
+        System.out.println("\n==============================");
+        System.out.println("   FASE 2: PRUEBAS DE FILTRADO   ");
+        System.out.println("==============================");
+        
+        // Insertar películas de prueba para filtrado
+        insertTestMoviesForFiltering(dao);
+        
+        // Test de filtrado por género
+        testGenreFiltering(dao);
+        
+        // Test de filtrado por año
+        testYearFiltering(dao);
+        
+        // Test de filtrado combinado
+        testCombinedFiltering(dao);
+        
         // Cleanup: remove any test data that might have been inserted
     System.out.println("\n==============================");
     System.out.println("   LIMPIEZA: Eliminando datos de prueba   ");
@@ -208,7 +230,11 @@ public class MovieDAOTest {
         
         String[] testTitles = {
             "Test Movie", "Old Movie", "Zero Duration Movie", "No Director Movie",
-            "Invalid Genre Movie", "Long Director Movie", "Invalid Director Movie"
+            "Invalid Genre Movie", "Long Director Movie", "Invalid Director Movie",
+            // Títulos de películas de prueba para filtrado
+            "Avengers: Endgame", "Titanic", "The Hangover", "It Chapter Two", 
+            "Casablanca", "The Matrix", "Se7en", "Indiana Jones", 
+            "Toy Story", "Free Solo"
         };
         
         int totalDeleted = 0;
@@ -231,6 +257,197 @@ public class MovieDAOTest {
         System.out.println("\n==============================");
         System.out.println("   TODAS LAS PRUEBAS FINALIZADAS   ");
         System.out.println("==============================");
+    }
+    
+    /**
+     * Inserta películas de prueba para testing de filtrado
+     */
+    private static void insertTestMoviesForFiltering(MovieDAO dao) {
+        System.out.println("\n------------------------------");
+        System.out.println("[SETUP] Insertando películas de prueba para filtrado");
+        System.out.flush();
+        
+        Movie[] testMovies = {
+            // Películas de Acción de diferentes años
+            createMovie("Avengers: Endgame", "Anthony Russo", 2019, 181, "Acción"),
+            createMovie("The Matrix", "Lana Wachowski", 1999, 136, "Acción"),
+            
+            // Películas de Drama de diferentes años
+            createMovie("Titanic", "James Cameron", 1997, 194, "Drama"),
+            createMovie("Casablanca", "Michael Curtiz", 1942, 102, "Drama"),
+            
+            // Películas de Comedia de diferentes años
+            createMovie("The Hangover", "Todd Phillips", 2009, 100, "Comedia"),
+            
+            // Películas de Terror de diferentes años
+            createMovie("It Chapter Two", "Andy Muschietti", 2019, 169, "Terror"),
+            
+            // Películas de Thriller de diferentes años
+            createMovie("Se7en", "David Fincher", 1995, 127, "Thriller"),
+            
+            // Películas de Aventura de diferentes años
+            createMovie("Indiana Jones", "Steven Spielberg", 1981, 115, "Aventura"),
+            
+            // Películas de Animación de diferentes años
+            createMovie("Toy Story", "John Lasseter", 1995, 81, "Animación"),
+            
+            // Películas de Documental de diferentes años
+            createMovie("Free Solo", "Jimmy Chin", 2018, 100, "Documental")
+        };
+        
+        int insertedCount = 0;
+        for (Movie movie : testMovies) {
+            try {
+                boolean inserted = dao.addMovie(movie);
+                if (inserted) {
+                    insertedCount++;
+                    System.out.println("[ÉXITO] Insertada: " + movie.getTitle() + " (" + movie.getGenre() + ", " + movie.getYear() + ")");
+                } else {
+                    System.out.println("[ERROR] No se pudo insertar: " + movie.getTitle());
+                }
+            } catch (Exception e) {
+                System.out.println("[ERROR] Excepción al insertar " + movie.getTitle() + ": " + e.getMessage());
+            }
+        }
+        
+        System.out.println("[SETUP] Total de películas insertadas para pruebas: " + insertedCount + "/" + testMovies.length);
+        System.out.flush();
+    }
+    
+    /**
+     * Crea una película de prueba con los parámetros dados
+     */
+    private static Movie createMovie(String title, String director, int year, int duration, String genre) {
+        Movie movie = new Movie();
+        movie.setTitle(title);
+        movie.setDirector(director);
+        movie.setYear(year);
+        movie.setDuration(duration);
+        movie.setGenre(genre);
+        return movie;
+    }
+    
+    /**
+     * Prueba el filtrado por género
+     */
+    private static void testGenreFiltering(MovieDAO dao) {
+        System.out.println("\n------------------------------");
+        System.out.println("[FILTRADO] Probando filtrado por género");
+        System.out.flush();
+        
+        String[] genresToTest = {"Acción", "Drama", "Comedia", "Terror", "Animación"};
+        
+        for (String genre : genresToTest) {
+            try {
+                java.util.List<Movie> allMovies = dao.getAllMovies();
+                java.util.List<Movie> filteredMovies = new java.util.ArrayList<>();
+                
+                // Simular filtrado por género
+                for (Movie movie : allMovies) {
+                    if (movie.getGenre() != null && movie.getGenre().equals(genre)) {
+                        filteredMovies.add(movie);
+                    }
+                }
+                
+                System.out.println("[FILTRO GÉNERO] " + genre + ": " + filteredMovies.size() + " película(s) encontrada(s)");
+                for (Movie movie : filteredMovies) {
+                    System.out.println("  - " + movie.getTitle() + " (" + movie.getYear() + ")");
+                }
+                
+            } catch (Exception e) {
+                System.out.println("[ERROR] Error al filtrar por género " + genre + ": " + e.getMessage());
+            }
+        }
+        System.out.flush();
+    }
+    
+    /**
+     * Prueba el filtrado por rango de años
+     */
+    private static void testYearFiltering(MovieDAO dao) {
+        System.out.println("\n------------------------------");
+        System.out.println("[FILTRADO] Probando filtrado por rango de años");
+        System.out.flush();
+        
+        int[][] yearRanges = {
+            {1990, 2000},  // Años 90
+            {2000, 2010},  // Años 2000
+            {2010, 2020},  // Años 2010
+            {1940, 1950}   // Años 40
+        };
+        
+        for (int[] range : yearRanges) {
+            int fromYear = range[0];
+            int toYear = range[1];
+            
+            try {
+                java.util.List<Movie> allMovies = dao.getAllMovies();
+                java.util.List<Movie> filteredMovies = new java.util.ArrayList<>();
+                
+                // Simular filtrado por rango de años
+                for (Movie movie : allMovies) {
+                    if (movie.getYear() >= fromYear && movie.getYear() <= toYear) {
+                        filteredMovies.add(movie);
+                    }
+                }
+                
+                System.out.println("[FILTRO AÑOS] " + fromYear + "-" + toYear + ": " + filteredMovies.size() + " película(s) encontrada(s)");
+                for (Movie movie : filteredMovies) {
+                    System.out.println("  - " + movie.getTitle() + " (" + movie.getYear() + ", " + movie.getGenre() + ")");
+                }
+                
+            } catch (Exception e) {
+                System.out.println("[ERROR] Error al filtrar por años " + fromYear + "-" + toYear + ": " + e.getMessage());
+            }
+        }
+        System.out.flush();
+    }
+    
+    /**
+     * Prueba el filtrado combinado (género + año)
+     */
+    private static void testCombinedFiltering(MovieDAO dao) {
+        System.out.println("\n------------------------------");
+        System.out.println("[FILTRADO] Probando filtrado combinado (género + año)");
+        System.out.flush();
+        
+        // Casos de filtrado combinado
+        String[][] combinedTests = {
+            {"Acción", "1995", "2005"},  // Películas de acción entre 1995-2005
+            {"Drama", "1940", "2000"},   // Películas de drama entre 1940-2000
+            {"Comedia", "2000", "2020"}  // Películas de comedia entre 2000-2020
+        };
+        
+        for (String[] test : combinedTests) {
+            String genre = test[0];
+            int fromYear = Integer.parseInt(test[1]);
+            int toYear = Integer.parseInt(test[2]);
+            
+            try {
+                java.util.List<Movie> allMovies = dao.getAllMovies();
+                java.util.List<Movie> filteredMovies = new java.util.ArrayList<>();
+                
+                // Simular filtrado combinado
+                for (Movie movie : allMovies) {
+                    boolean matchesGenre = movie.getGenre() != null && movie.getGenre().equals(genre);
+                    boolean matchesYear = movie.getYear() >= fromYear && movie.getYear() <= toYear;
+                    
+                    if (matchesGenre && matchesYear) {
+                        filteredMovies.add(movie);
+                    }
+                }
+                
+                System.out.println("[FILTRO COMBINADO] " + genre + " (" + fromYear + "-" + toYear + "): " + 
+                                 filteredMovies.size() + " película(s) encontrada(s)");
+                for (Movie movie : filteredMovies) {
+                    System.out.println("  - " + movie.getTitle() + " (" + movie.getYear() + ", " + movie.getGenre() + ")");
+                }
+                
+            } catch (Exception e) {
+                System.out.println("[ERROR] Error en filtrado combinado " + genre + " (" + fromYear + "-" + toYear + "): " + e.getMessage());
+            }
+        }
+        System.out.flush();
     }
     
     private static void testCaseWithDB(MovieDAO dao, String caseName, String title, String director, int year, int duration, String genre, MovieCreator creator) {
