@@ -2,7 +2,7 @@ package projectmagenta.view;
 
 import projectmagenta.controller.MovieController;
 import javax.swing.*;
-import projectmagenta.model.Movie; // Ensure the correct package path for the Movie class
+import projectmagenta.model.Movie; 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,7 +30,8 @@ public class AddMovieForm extends JInternalFrame {
     private MainFrame mainFrame;
     
     /**
-     * Sets the main frame reference for live updates.
+     * Set del main frame para permitir actualizaciones en vivo.
+     * @param mainFrame instancia de MainFrame
      */
     public void setMainFrame(MainFrame mainFrame) {
         this.mainFrame = mainFrame;

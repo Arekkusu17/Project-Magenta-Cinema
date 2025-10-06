@@ -6,6 +6,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+/**
+ * Formulario para modificar películas en el sistema.
+ * Incluye validaciones y botón para limpiar campos.
+ * @author Alex Fernandez
+ */
 public class EditMovieForm extends JInternalFrame {
     private MovieController movieController;
     private MainFrame mainFrame;
